@@ -13,6 +13,7 @@ import huancun.utils.ResetGen
 import system.HasSoCParameter
 import top.BusPerfMonitor
 import utils.{TLClientsMerger, TLEdgeBuffer, IntBuffer}
+import xiangshan.rocc.RoccCore
 
 class L1BusErrorUnitInfo(implicit val p: Parameters) extends Bundle with HasSoCParameter {
   val ecc_error = Valid(UInt(soc.PAddrBits.W))
@@ -121,6 +122,15 @@ class XSTile()(implicit p: Parameters) extends LazyModule
     TLLogger(s"L2_L1I_${coreParams.HartId}", !debugOpts.FPGAPlatform) :=
     l1i_to_l2_buf_node :=
     core.frontend.icache.clientNode
+
+  // rocc 集成
+  val rocc_coproc = LazyModule(new RoccCore())
+  val (rocc_to_l2_buffers, rocc_to_l2_buf_node) = chainBuffer(3, "rocc_to_l2_buffer")
+  misc.busPMU :=
+    TLLogger(s"rocc", !debugOpts.FPGAPlatform) :=
+    rocc_to_l2_buf_node :=
+    rocc_coproc.node
+  //
 
   val ptw_to_l2_buffers = if (!coreParams.softPTW) {
     val (buffers, buf_node) = chainBuffer(5, "ptw_to_l2_buffer")
