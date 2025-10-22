@@ -47,5 +47,18 @@ class RoccCore()(implicit p: Parameters) extends LazyModule{
 class RoccCoreImp(outer: RoccCore) extends LazyModuleImp(outer){
     // val io = IO(new RoCCCoreIO)
     val (bus, edge) = outer.node.out.head
-    bus <> DontCare
+    val heartbeat = RegInit(0.U(64.W))
+    heartbeat := heartbeat + 1.U
+    
+    bus.a.valid := false.B
+    bus.a.bits := 0.U.asTypeOf(bus.a.bits)
+    bus.b.ready := true.B
+    bus.c.valid := false.B
+    bus.c.bits := 0.U.asTypeOf(bus.c.bits)
+    bus.d.ready := true.B
+    bus.e.valid := false.B
+    bus.e.bits := 0.U.asTypeOf(bus.e.bits)
+
+    dontTouch(bus)
+    dontTouch(heartbeat)
 }
