@@ -61,6 +61,7 @@ package object xiangshan {
     def div          = "b0101".U
     def fence        = "b0011".U
     def bku          = "b0111".U
+    def rocc         = "b1001".U
 
     def fmac         = "b1000".U
     def fmisc        = "b1011".U
@@ -78,7 +79,8 @@ package object xiangshan {
 
     def isIntExu(fuType: UInt) = !fuType(3)
     def isJumpExu(fuType: UInt) = fuType === jmp
-    def isFpExu(fuType: UInt) = fuType(3, 2) === "b10".U
+    def isRocc(fuType: UInt) = fuType === rocc
+    def isFpExu(fuType: UInt) = fuType(3, 2) === "b10".U && fuType =/= rocc
     def isMemExu(fuType: UInt) = fuType(3, 2) === "b11".U
     def isLoadStore(fuType: UInt) = isMemExu(fuType) && !fuType(1)
     def isStoreExu(fuType: UInt) = isMemExu(fuType) && fuType(0)
@@ -88,7 +90,7 @@ package object xiangshan {
     def isSvinval(fuType: UInt, func: UInt, flush: Bool) = isFence(fuType) && func === FenceOpType.sfence && !flush
     def isSvinvalEnd(fuType: UInt, func: UInt, flush: Bool) = isFence(fuType) && func === FenceOpType.nofence && flush
 
-
+    // todo:change for rocc
     def jmpCanAccept(fuType: UInt) = !fuType(2)
     def mduCanAccept(fuType: UInt) = fuType(2) && !fuType(1) || fuType(2) && fuType(1) && fuType(0)
     def aluCanAccept(fuType: UInt) = fuType(2) && fuType(1) && !fuType(0)

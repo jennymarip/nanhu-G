@@ -450,7 +450,7 @@ object XSTrapDecode extends DecodeConstants {
 object XSRoccDecode extends DecodeConstants {
   def ROCC = BitPat("b0000000??????????000?????0001011")
   val table: Array[(BitPat, List[BitPat])] = Array(
-    ROCC    -> List(SrcType.reg, SrcType.reg, SrcType.reg, FuType.X, FuOpType.X, N, N, N, N, N, N, SelImm.IMM_X, Y)
+    ROCC    -> List(SrcType.reg, SrcType.reg, SrcType.reg, FuType.rocc, FuOpType.X, N, N, N, N, N, N, SelImm.IMM_X, Y)
   )
 }
 

@@ -253,6 +253,9 @@ class CtrlBlockImp(outer: CtrlBlock)(implicit p: Parameters) extends LazyModuleI
   val intDq = Module(new DispatchQueue(dpParams.IntDqSize, RenameWidth, dpParams.IntDqDeqWidth))
   val fpDq = Module(new DispatchQueue(dpParams.FpDqSize, RenameWidth, dpParams.FpDqDeqWidth))
   val lsDq = Module(new DispatchQueue(dpParams.LsDqSize, RenameWidth, dpParams.LsDqDeqWidth))
+  val roccDq = Module(new DispatchQueue(dpParams.RoccDqSize, RenameWidth, dpParams.RoccDqDeqWidth))
+  roccDq.io.deq.foreach(_.ready := false.B)
+  dontTouch(roccDq.io)
   val redirectGen = Module(new RedirectGenerator)
   // jumpPc (2) + redirects (1) + loadPredUpdate (1) + jalr_target (1) + [ld pc (LduCnt)] + robFlush (1)
   val pcMem = Module(new SyncDataModuleTemplate(
@@ -439,12 +442,14 @@ class CtrlBlockImp(outer: CtrlBlock)(implicit p: Parameters) extends LazyModuleI
   dispatch.io.toIntDq <> intDq.io.enq
   dispatch.io.toFpDq <> fpDq.io.enq
   dispatch.io.toLsDq <> lsDq.io.enq
+  dispatch.io.toRoccDq <> roccDq.io.enq
   dispatch.io.allocPregs <> io.allocPregs
   dispatch.io.singleStep := RegNext(io.csrCtrl.singlestep)
 
   intDq.io.redirect <> redirectForExu
   fpDq.io.redirect <> redirectForExu
   lsDq.io.redirect <> redirectForExu
+  roccDq.io.redirect <> redirectForExu
 
   val dpqOut = intDq.io.deq ++ lsDq.io.deq ++ fpDq.io.deq
   io.dispatch <> dpqOut

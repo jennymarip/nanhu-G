@@ -138,9 +138,11 @@ case class XSCoreParameters
     IntDqSize = 16,
     FpDqSize = 16,
     LsDqSize = 16,
+    RoccDqSize = 16,
     IntDqDeqWidth = 4,
     FpDqDeqWidth = 4,
-    LsDqDeqWidth = 4
+    LsDqDeqWidth = 4,
+    RoccDqDeqWidth = 4
   ),
   exuParameters: ExuParameters = ExuParameters(
     JmpCnt = 1,
